@@ -62,4 +62,30 @@ class BinSearchTreeTest {
         var exp = Stream.of(expected.split(",")).map(String::trim).toList();
         assertEquals(exp, strings);
     }
+
+    @ParameterizedTest
+    @CsvSource (value = {
+        "A,B,C | 3 | 2",
+        "A, B, C, D, E| 5 | 3",
+    }, delimiter = '|')
+    void testBalance(String input, int unbalancedSize, int expectedHeight) {
+        BinSearchTree<String> tree = new BinSearchTree<>();
+        Stream.of(input.split(",")).map(String::trim).forEach(tree::insert);
+        assertEquals(unbalancedSize, tree.size());
+        BinSearchTree<String> result = tree.balance();
+        assertEquals(expectedHeight, result.size());
+    }
+
+
+    @ParameterizedTest
+    @CsvSource (value = {
+        "A,B,C | A | true",
+        "A,B,C | D | false",
+//        "A, B, C, D, E| 5 | 3",
+    }, delimiter = '|')
+    void testContains(String input, String contains, boolean expected) {
+        BinSearchTree<String> tree = new BinSearchTree<>();
+        Stream.of(input.split(",")).map(String::trim).forEach(tree::insert);
+        assertEquals(expected, tree.contains(contains));
+    }
 }

@@ -27,4 +27,12 @@ public class BinNode<T extends Comparable<T>> {
         return this.left == null && this.right == null;
     }
 
+    public boolean hasLeft() {
+        return this.left != null;
+    }
+
+    public boolean hasRight() {
+        return this.right != null;
+    }
+
 }

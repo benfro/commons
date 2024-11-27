@@ -20,6 +20,15 @@ public class BinSearchTree<V extends Comparable<V>> {
         return this;
     }
 
+    public BinSearchTree<V> insert(BinNode<V> value) {
+        if (Objects.isNull(root)) {
+            root = value;
+        } else {
+            next(root, value.getValue());
+        }
+        return this;
+    }
+
     private BinSearchTree<V> next(BinNode<V> currentNode, V nextValue) {
         if (nextValue.compareTo(currentNode.getValue()) <= 0) {
             if (currentNode.getLeft() != null) {
@@ -45,6 +54,22 @@ public class BinSearchTree<V extends Comparable<V>> {
         return null;
     }
 
+    public boolean contains(V value) {
+        return contains(root, value);
+    }
+
+    private boolean contains(BinNode<V> currentNode, V value) {
+        if(root != null) {
+            if(root.getValue().equals(value)) {
+                return true;
+            } else {
+                return (currentNode.hasLeft() && contains(currentNode.getLeft(), value))
+                    || (currentNode.hasRight() && contains(currentNode.getRight(), value));
+            }
+        }
+        return false;
+    }
+
     public int size() {
         return height(root);
     }
@@ -57,7 +82,7 @@ public class BinSearchTree<V extends Comparable<V>> {
         }
     }
 
-    List<V> inOrderWalk(BinNode<V> node) {
+    public List<V> inOrderWalk(BinNode<V> node) {
         List<V> out = new ArrayList<>();
         if (Objects.nonNull(node.getLeft())) {
             out.addAll(inOrderWalk(node.getLeft()));
@@ -67,6 +92,23 @@ public class BinSearchTree<V extends Comparable<V>> {
             out.addAll(inOrderWalk(node.getRight()));
         }
         return out;
+    }
+
+    private BinNode<V> balance(List<V> elements, int start, int end) {
+        if (start > end)  return null;
+        int mid = start + (end - start) / 2;
+        BinNode<V> root = new BinNode(elements.get(mid));
+
+        root.setLeft(balance(elements, start, mid - 1));
+        root.setRight(balance(elements, mid + 1, end));
+        return root;
+    }
+
+    public BinSearchTree<V> balance() {
+        List<V> vs = inOrderWalk(root);
+        BinNode<V> balanced = balance(vs, 0, vs.size() - 1);
+        BinSearchTree<V> tree = new BinSearchTree<>();
+        return tree.insert(balanced);
     }
 
 }
